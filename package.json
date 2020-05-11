@@ -1,0 +1,20 @@
+{
+  "name": "noip-auto-renew-service",
+  "version": "0.0.1",
+  "description": "Deployable service which will renew your noip expiring hostnames.",
+  "main": "index.js",
+  "scripts": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/asarama/noip-auto-renew-service.git"
+  },
+  "author": "Asarama",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/asarama/noip-auto-renew-service/issues"
+  },
+  "homepage": "https://github.com/asarama/noip-auto-renew-service#readme",
+  "dependencies": {
+    "puppeteer": "^3.0.4"
+  }
+}
