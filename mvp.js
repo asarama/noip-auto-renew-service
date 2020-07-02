@@ -1,14 +1,19 @@
 const puppeteer = require('puppeteer');
+const { no_ip } = require('./config');
 
 const 
     DEFAULT_TIMEOUT = 5 * 1000,
     noip_urls = {
         login: "https://www.noip.com/login?ref_url=console",
+        hostnames: "https://my.noip.com/#!/dynamic-dns",
     },
     noip_selectors = {
         username: "#clogs > input[name='username']",
         password: "#clogs > input[name='password']",
         login_button: "#clogs > button[name='Login']",
+        hostname_table: "#host-panel > table",
+        hostname_links: ".table-striped-row > .word-break-col > a.text-info",
+        update_hostname_button: "#content-wrapper div.modal-footer > button.btn.btn-170.btn-flat.btn-success.btn-round-corners.pr-sm.ml-sm-30",
     },
     config = require('./config');
 
@@ -161,6 +166,49 @@ const click_button = async (page, selector) => {
 
 }
 
+const update_hostnames = async (page, throw_error=false) => {
+
+
+    // Confirm element exists
+    if (!await element_exists(page, noip_selectors.hostname_table)) {
+        throw new Error(`Could not find hostname table`)
+    }
+
+    let find_hostname_links_response
+    
+    try {
+
+        find_hostname_links_response = await page.evaluate( async (noip_selectors) => {
+
+            const elements = document.querySelectorAll(noip_selectors.hostname_links)
+
+            elements.forEach(element => {
+                // Open the update modal
+                element.click()
+
+                // Click the update hostname button
+                document.querySelector(noip_selectors.update_hostname_button).click()
+            })
+
+
+        }, noip_selectors)
+
+        return find_hostname_links_response
+
+    } catch(err) {
+
+        console.error(err)
+
+        if (throw_error) {
+            throw new Error(`Unknown error`)
+        }
+        
+        return []
+        
+    }
+
+}
+
 // Main script
 (async () => {
     const browser = await puppeteer.launch(browser_launch_options);
@@ -176,6 +224,20 @@ const click_button = async (page, selector) => {
     await fill_input_field(page, noip_selectors.username, config.no_ip.username)
     await fill_input_field(page, noip_selectors.password, config.no_ip.password)
     await click_button(page, noip_selectors.login_button)
+
+    // TODO: Handle failed logins
+    // Caused by:
+    //  Bad credentials
+    //  Too many login attempts
+
+    // Find host names
+    // Count hostnames
+    // For each hostname
+    //   click link
+    //   click Update Hostname button
+    await navigate(page, noip_urls.hostnames)
+
+    await update_hostnames(page)
 
     await browser.close();
 })();
