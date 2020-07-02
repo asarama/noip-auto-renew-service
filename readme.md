@@ -1,6 +1,6 @@
 # NoIp Auto Renew Service
 
-Deployable service which will renew your expiring hostnames.
+Deployable service which will renew your expiring noip hostnames.
 
 ## TODO:
 - MVP Script
