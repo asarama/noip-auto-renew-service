@@ -3,11 +3,12 @@ const puppeteer = require('puppeteer');
 const 
     DEFAULT_TIMEOUT = 5 * 1000,
     noip_urls = {
-        login: "https://www.noip.com/login?ref_url=console"
+        login: "https://www.noip.com/login?ref_url=console",
     },
     noip_selectors = {
         username: "#clogs > input[name='username']",
         password: "#clogs > input[name='password']",
+        login_button: "#clogs > button[name='Login']",
     },
     config = require('./config');
 
@@ -145,6 +146,21 @@ const fill_input_field = async (page, selector, value) => {
 
 }
 
+const click_button = async (page, selector) => {
+
+    // Confirm element exists
+    if (!await element_exists(page, selector)) {
+        throw new Error(`Could not find element to fill with selector "${selector}"`)
+    }
+
+    try {
+        await page.click(selector)
+    } catch(err) {
+        throw new Error(`Could not click button with selector "${selector}"`)
+    }
+
+}
+
 // Main script
 (async () => {
     const browser = await puppeteer.launch(browser_launch_options);
@@ -159,7 +175,7 @@ const fill_input_field = async (page, selector, value) => {
     // Fill in username and password
     await fill_input_field(page, noip_selectors.username, config.no_ip.username)
     await fill_input_field(page, noip_selectors.password, config.no_ip.password)
-
+    await click_button(page, noip_selectors.login_button)
 
     await browser.close();
 })();
