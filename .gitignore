@@ -3,3 +3,5 @@ config.js
 example.png
 
 node_modules
+
+.vscode

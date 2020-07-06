@@ -62,6 +62,15 @@ const create_timestamp = () => {
     return timestamp
 }
 
+const timeout = ms => {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+const sleep = async (delay, fn, ...args) => {
+    await timeout(delay);
+    return fn(...args);
+}
+
 let browser_launch_options = {
     headless: config.debug_mode ? false : true
 };
@@ -69,12 +78,17 @@ let browser_launch_options = {
 let 
     session_timestamp = create_timestamp(),
     navigation_counter = 0;
-let navigate = async (page, url, waitUntil='networkidle2') => {    
-    await page.goto(url, {waitUntil});
+
+let navigate = async (page, url, extra_delay=null) => {
+    await page.goto(url, { waitUntil: 'networkidle2' });
 
     if (config.debug_mode) {
         await page.screenshot({path: `./debugging/${session_timestamp}-${navigation_counter}.png`});
         navigation_counter++;
+    }
+
+    if (extra_delay) {
+        await timeout(extra_delay)
     }
     
 };
@@ -180,16 +194,32 @@ const update_hostnames = async (page, throw_error=false) => {
 
         find_hostname_links_response = await page.evaluate( async (noip_selectors) => {
 
-            const elements = document.querySelectorAll(noip_selectors.hostname_links)
+            const
+                delay = 5000, 
+                elements = document.querySelectorAll(noip_selectors.hostname_links)
 
-            elements.forEach(element => {
-                // Open the update modal
-                element.click()
+            for (let delay_counter = 0; delay_counter < elements.length; delay_counter++) {
 
-                // Click the update hostname button
-                document.querySelector(noip_selectors.update_hostname_button).click()
-            })
+                const 
+                    element = elements[delay_counter],
+                    timeout_value = delay_counter * delay
 
+                setTimeout(async (element) => {
+
+                    // Open the update modal
+                    element.click()
+
+                    // Click the update hostname button
+                    setTimeout(async (update_hostname_button_selector) => {
+
+                        const update_hostname_button = document.querySelector(update_hostname_button_selector)
+                        update_hostname_button.click()
+
+                    }, 1000, noip_selectors.update_hostname_button);
+
+                }, timeout_value, element)
+
+            }
 
         }, noip_selectors)
 
@@ -235,10 +265,15 @@ const update_hostnames = async (page, throw_error=false) => {
     // For each hostname
     //   click link
     //   click Update Hostname button
-    await navigate(page, noip_urls.hostnames)
-
+    await navigate(page, noip_urls.hostnames, 2000)
+    
     await update_hostnames(page)
 
-    await browser.close();
+    setTimeout(async () => {
+
+        await browser.close()
+
+    }, 30 * 1000)
+    
 })();
 
