@@ -1,9 +1,10 @@
 const
     Browser = require('./src/browser'),
     config = require('./config'),
-    definitions = require('./src/definitions')
+    definitions = require('./src/definitions'),
+    schedule = require('node-schedule')
 
-
+// Main process
 const init = async () => {
     // Main script
     const browser = new Browser()
@@ -92,4 +93,9 @@ const update_hostnames = async (page, throw_error=false) => {
 
 }
 
-init()
+
+if (config.debug_mode) {
+    init()
+}
+
+const job = schedule.scheduleJob(config.cron_string, init)
