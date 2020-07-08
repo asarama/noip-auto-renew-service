@@ -1,5 +1,4 @@
 const puppeteer = require('puppeteer');
-const { no_ip } = require('./config');
 
 const 
     DEFAULT_TIMEOUT = 5 * 1000,
@@ -148,7 +147,6 @@ const set_element_value = async (page, selector, value, throw_error=false) => {
         
     }
 }
-
 
 const fill_input_field = async (page, selector, value) => {
 
