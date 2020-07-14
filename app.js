@@ -90,7 +90,6 @@ const update_hostnames = async (page, throw_error=false) => {
         return []
         
     }
-
 }
 
 

@@ -3,7 +3,9 @@
   "version": "0.0.1",
   "description": "Deployable service which will renew your noip expiring hostnames.",
   "main": "index.js",
-  "scripts": {},
+  "scripts": {
+    "up": "node ./app.js"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/asarama/noip-auto-renew-service.git"
