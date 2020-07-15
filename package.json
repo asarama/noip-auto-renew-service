@@ -6,8 +6,9 @@
   "scripts": {
     "up": "node ./app.js",
     "build": "docker build -t asarama/noip-auto-renew-service:0.1 ./",
-    "start": "docker run --rm -ti asarama/noip-auto-renew-service:0.1"
-
+    "start": "docker run --rm -ti asarama/noip-auto-renew-service:0.1",
+    "install-windows": "node ./installers/windows/install.js",
+    "uninstall-windows": "node ./installers/windows/uninstall.js"
   },
   "repository": {
     "type": "git",
