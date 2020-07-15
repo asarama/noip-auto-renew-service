@@ -37,4 +37,4 @@ RUN source $NVM_DIR/nvm.sh \
     && nvm use default \
     && npm install
 
-CMD ["node", "app.js"]
+CMD ["./docker/start.sh"]

@@ -4,7 +4,10 @@
   "description": "Deployable service which will renew your noip expiring hostnames.",
   "main": "index.js",
   "scripts": {
-    "up": "node ./app.js"
+    "up": "node ./app.js",
+    "build": "docker build -t asarama/noip-auto-renew-service:0.1 ./",
+    "start": "docker run --rm -ti asarama/noip-auto-renew-service:0.1"
+
   },
   "repository": {
     "type": "git",

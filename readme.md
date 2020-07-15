@@ -6,7 +6,7 @@ Deployable service which will renew your expiring noip hostnames.
 - ~~MVP Script~~
 - ~~Application architecture~~
 - ~~Scheduling~~
-- Containerization
+- ~~Containerization~~
 - User Manual
 
 ## Setup
