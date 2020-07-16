@@ -3,6 +3,7 @@ const
     config = require('./config'),
     definitions = require('./src/definitions'),
     schedule = require('node-schedule')
+const { timeout } = require('./src/helpers')
 
 // Main process
 const init = async () => {
@@ -24,60 +25,55 @@ const init = async () => {
     //  Too many login attempts
 
     await page.navigate(definitions.urls.hostnames, 2000)
-    await update_hostnames(page)
+    
+    if (config.no_ip.update_hostnames) {
+        await update_hostnames(page)
+    }
+    
+    if (config.no_ip.confirm_hostnames) {
+        await confirm_hostnames(page)
+    }
 
-    setTimeout(async () => {
-
-        await browser.close()
-
-    }, 30 * 1000)
+    await timeout(5000)
+    await browser.close()
     
 }
 
-// Opens each hostname modal and then clicks the update hostname button
-const update_hostnames = async (page, throw_error=false) => {
+// Clicks the confirm hostname button
+const confirm_hostnames = async (page, throw_error=false) => {
 
     // Confirm element exists
     if (!await page.element_exists(definitions.selectors.hostname_table)) {
         throw new Error(`Could not find hostname table`)
     }
 
-    let find_hostname_links_response
-    
     try {
 
-        find_hostname_links_response = await page.source.evaluate( async (selectors) => {
+        await page.source.evaluate( async (selectors) => {
 
-            const
-                delay = 5000, 
-                elements = document.querySelectorAll(selectors.hostname_links)
+            const wait = async (timeout) => {
+                return new Promise((resolve) => {
+                    setTimeout(resolve, timeout)
+                })
+            }
 
-            for (let delay_counter = 0; delay_counter < elements.length; delay_counter++) {
+            const elements_to_click = document.querySelectorAll(selectors.confirm_hostname_buttons)
 
-                const 
-                    element = elements[delay_counter],
-                    timeout_value = delay_counter * delay
+            for (let element_counter = 0; element_counter < elements_to_click.length; element_counter++) {
 
-                setTimeout(async (element) => {
+                const element_to_click = elements_to_click[element_counter]
 
-                    // Open the update modal
-                    element.click()
-
-                    // Click the update hostname button
-                    setTimeout(async (update_hostname_button_selector) => {
-
-                        const update_hostname_button = document.querySelector(update_hostname_button_selector)
-                        update_hostname_button.click()
-
-                    }, 1000, selectors.update_hostname_button);
-
-                }, timeout_value, element)
+                await wait(5000)
+                // Click the confirm hostname button
+                element_to_click.click()
 
             }
 
+            console.log("Confirmed Hostnames")
+
         }, definitions.selectors)
 
-        return find_hostname_links_response
+        return true
 
     } catch(err) {
 
@@ -87,7 +83,62 @@ const update_hostnames = async (page, throw_error=false) => {
             throw new Error(`Unknown error`)
         }
         
-        return []
+        return false
+        
+    }
+
+}
+
+// Opens each hostname modal and then clicks the update hostname button
+const update_hostnames = async (page, throw_error=false) => {
+
+    // Confirm element exists
+    if (!await page.element_exists(definitions.selectors.hostname_table)) {
+        throw new Error(`Could not find hostname table`)
+    }
+    
+    try {
+
+        await page.source.evaluate( async (selectors) => {
+
+            const wait = async (timeout) => {
+                return new Promise((resolve) => {
+                    setTimeout(resolve, timeout)
+                })
+            }
+
+            const elements = document.querySelectorAll(selectors.hostname_links)
+
+            for (let element_counter = 0; element_counter < elements.length; element_counter++) {
+
+                const element = elements[element_counter]
+
+                await wait(5000)
+                // Open the update modal
+                element.click()
+
+                await wait(1000)
+                // Select and click the update hostname button
+                const update_hostname_button = document.querySelector(selectors.update_hostname_button)
+                update_hostname_button.click()
+
+            }
+
+            console.log("Updated Hostnames")
+
+        }, definitions.selectors)
+
+        return true
+
+    } catch(err) {
+
+        console.error(err)
+
+        if (throw_error) {
+            throw new Error(`Unknown error`)
+        }
+        
+        return false
         
     }
 }

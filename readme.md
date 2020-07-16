@@ -9,6 +9,7 @@ Deployable service which will renew your expiring noip hostnames.
 - ~~Containerization~~
 - ~~Windows Service~~
 - ~~Simple usage documentation~~
+- Logging
 - Code documentation
 
 ## Setup

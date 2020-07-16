@@ -6,6 +6,12 @@ Defines when and how often the renew process should run. For more information on
 
 ## no_ip
 
+### update_hostnames
+Opens the hostname edit modal and clicks the update hostname button.
+
+### confirm_hostnames
+If your hostname is expiring, clicks the confirm hostname button.
+
 ### username
 Your NoIp login username.
 
