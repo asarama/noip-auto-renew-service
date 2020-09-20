@@ -9,10 +9,11 @@ Deployable service which will renew your expiring noip hostnames.
 - ~~Containerization~~
 - ~~Windows Service~~
 - ~~Simple usage documentation~~
-- Logging
+- ~~Logging~~
 - Code documentation
 - Code review
 - Handle error cases
+- Add docker browser sandbox
 
 ## Requirements
 - Node v10.1+

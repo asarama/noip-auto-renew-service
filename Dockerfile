@@ -9,15 +9,14 @@ WORKDIR /noip-auto-renew-service
 # update the repository sources list
 # and install dependencies
 RUN apt-get update \
-    && apt-get install -y curl
+    && apt-get install -y curl chromium sudo
 
 ENV NVM_DIR /usr/local/nvm
 ENV NODE_VERSION lts/erbium
 ENV NVM_VERSION 0.35.3
 
-
 # Install nvm
-RUN mkdir /usr/local/nvm \
+RUN sudo mkdir /usr/local/nvm \
     && curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v$NVM_VERSION/install.sh | bash 
 
 # Install node and npm
@@ -36,5 +35,8 @@ COPY . .
 RUN source $NVM_DIR/nvm.sh \
     && nvm use default \
     && npm install
+
+RUN useradd -m docker && echo "docker:docker" | chpasswd && adduser docker sudo
+RUN chown -R docker:docker /noip-auto-renew-service
 
 CMD ["./docker/start.sh"]
