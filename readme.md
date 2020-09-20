@@ -11,6 +11,11 @@ Deployable service which will renew your expiring noip hostnames.
 - ~~Simple usage documentation~~
 - Logging
 - Code documentation
+- Code review
+- Handle error cases
+
+## Requirements
+- Node v10.1+
 
 ## Setup
 
@@ -22,7 +27,7 @@ npm i
 cp config.example.js config.js
 ```
 
-Fill out the ```config.js``` parameters. For more information on what each parameter does check ```config.md```
+Fill out the ```config.js``` parameters. For more information on what each parameter does review ```config.md```.
 
 ### Docker (untested)
 
@@ -39,7 +44,7 @@ npm run start
 On Windows OS you can install this script as a service using the following commands:
 
 ```bash
-npm i node-windows
+npm i -g node-windows
 
 ```
 

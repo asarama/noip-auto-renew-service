@@ -18,6 +18,14 @@ Your NoIp login username.
 ### password
 Your NoIp login password.
 
+## Service
+
+### Name
+Service name used to keep track of different instances of this application.
+
+### Email
+Settings used to setup a simple SMTP email client connection used for logging. ```from``` will define where the email will come from and ```to``` defines who the email should be sent to.
+
 ## default_timeout
 The time our browser waits before considering navigation to a new page a failure.
 

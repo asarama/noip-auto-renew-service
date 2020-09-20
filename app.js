@@ -2,21 +2,31 @@ const
     Browser = require('./src/browser'),
     config = require('./config'),
     definitions = require('./src/definitions'),
-    schedule = require('node-schedule')
-const { timeout } = require('./src/helpers')
+    schedule = require('node-schedule'),
+    { timeout } = require('./src/helpers'),
+    logger = new (require('./src/logger'))({
+        file_directory: `${__dirname}/logs`
+    })
 
 // Main process
 const init = async () => {
+
+    logger.info("Starting renew process")
+
     // Main script
     const browser = new Browser()
+    logger.info("Creating browser page")
     const page = await browser.create_page()
     
     // Navigate to noip login page
+    logger.info("Navigating to NoIp login page")
     await page.navigate(definitions.urls.login)
 
     // Login
+    logger.info("Filling in credentials")
     await page.fill_input_field(definitions.selectors.username, config.no_ip.username)
     await page.fill_input_field(definitions.selectors.password, config.no_ip.password)
+    logger.info("Logging in")
     await page.click_button(definitions.selectors.login_button)
 
     // TODO: Handle failed logins
@@ -24,17 +34,21 @@ const init = async () => {
     //  Bad credentials
     //  Too many login attempts
 
+    logger.info("Navigating to hostnames page")
     await page.navigate(definitions.urls.hostnames, 2000)
     
     if (config.no_ip.update_hostnames) {
+        logger.info("Updating hostnames")
         await update_hostnames(page)
     }
     
     if (config.no_ip.confirm_hostnames) {
+        logger.info("Confirming hostnames")
         await confirm_hostnames(page)
     }
 
     await timeout(5000)
+    logger.info("Renew process successful")
     await browser.close()
     
 }
@@ -44,7 +58,9 @@ const confirm_hostnames = async (page, throw_error=false) => {
 
     // Confirm element exists
     if (!await page.element_exists(definitions.selectors.hostname_table)) {
-        throw new Error(`Could not find hostname table`)
+        const error_message = `Could not find hostname table`
+        logger.error(error_message)
+        throw new Error(error_message)
     }
 
     try {
@@ -69,18 +85,18 @@ const confirm_hostnames = async (page, throw_error=false) => {
 
             }
 
-            console.log("Confirmed Hostnames")
-
         }, definitions.selectors)
 
         return true
 
     } catch(err) {
 
-        console.error(err)
+        const error_message = `Unknown error`
+        logger.error(error_message)
+        logger.error(err)
 
         if (throw_error) {
-            throw new Error(`Unknown error`)
+            throw new Error(error_message)
         }
         
         return false
@@ -94,7 +110,9 @@ const update_hostnames = async (page, throw_error=false) => {
 
     // Confirm element exists
     if (!await page.element_exists(definitions.selectors.hostname_table)) {
-        throw new Error(`Could not find hostname table`)
+        const error_message = `Could not find hostname table`
+        logger.error(error_message)
+        throw new Error(error_message)
     }
     
     try {
@@ -124,18 +142,18 @@ const update_hostnames = async (page, throw_error=false) => {
 
             }
 
-            console.log("Updated Hostnames")
-
         }, definitions.selectors)
 
         return true
 
     } catch(err) {
 
-        console.error(err)
+        const error_message = `Unknown error`
+        logger.error(error_message)
+        logger.error(err)
 
         if (throw_error) {
-            throw new Error(`Unknown error`)
+            throw new Error(error_message)
         }
         
         return false
@@ -145,6 +163,9 @@ const update_hostnames = async (page, throw_error=false) => {
 
 
 if (config.debug_mode) {
+    logger.info("===================")
+    logger.info("Debug session start")
+    logger.info("===================")
     init()
 }
 
