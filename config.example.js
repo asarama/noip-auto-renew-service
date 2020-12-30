@@ -1,5 +1,6 @@
 module.exports = {
     debug_mode: false,
+    headless_mode: false,
     cron_string: "30 2 * * *",
     no_ip: {
         update_hostnames: true,

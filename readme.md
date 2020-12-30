@@ -32,6 +32,8 @@ Fill out the ```config.js``` parameters. For more information on what each param
 
 ### Docker (untested)
 
+Note: While running the application using docker make sure the headless_mode property in your config file is set to `false`.
+
 ```bash
 npm run build
 ```

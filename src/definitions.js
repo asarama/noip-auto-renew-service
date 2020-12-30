@@ -16,7 +16,7 @@ module.exports = {
         confirm_hostname_buttons: "#host-panel > table > tbody > tr > td.text-right-md > button.btn-confirm"
     },
     browser_launch_options: {
-        headless: config.debug_mode ? false : true,
+        headless: config.headless_mode ? false : true,
         args: ['--no-sandbox', '--disable-setuid-sandbox']
     }
 }
