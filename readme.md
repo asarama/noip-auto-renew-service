@@ -1,3 +1,6 @@
+# Depreciated
+
+As of March 25th 2021 noip has implemented a recaptcha check to block bots. I will no longer be maintaining or developing this service further.
 # NoIp Auto Renew Service
 
 Deployable service which will renew your expiring noip hostnames.
